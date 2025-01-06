@@ -24,6 +24,8 @@
  */
 namespace tool_lifecycle\local\manager;
 
+use tool_lifecycle\local\entity\workflow;
+
 /**
  * Manager for Delayed Courses.
  *
@@ -38,7 +40,7 @@ class delayed_courses_manager {
      * Sets a delay for a course for specific workflow.
      * @param int $courseid Id of the course.
      * @param bool $becauserollback True, if the delay is caused by a rollback.
-     * @param int $workfloworid Id of the workflow.
+     * @param int|workflow $workfloworid Id of the workflow.
      * @throws \dml_exception
      */
     public static function set_course_delayed_for_workflow($courseid, $becauserollback, $workfloworid) {
@@ -58,7 +60,7 @@ class delayed_courses_manager {
         } else {
             $delayeduntil = time() + $duration;
             $record = $DB->get_record('tool_lifecycle_delayed_workf',
-                        array('courseid' => $courseid, 'workflowid' => $workflow->id));
+                        ['courseid' => $courseid, 'workflowid' => $workflow->id]);
             if (!$record) {
                 $record = new \stdClass();
                 $record->courseid = $courseid;
@@ -84,7 +86,7 @@ class delayed_courses_manager {
     public static function get_delayed_courses_for_workflow($workflowid) {
         global $DB;
         $sql = 'SELECT courseid FROM {tool_lifecycle_delayed_workf} WHERE delayeduntil > :now AND workflowid = :workflowid';
-        return $DB->get_fieldset_sql($sql, array('now' => time(), 'workflowid' => $workflowid));
+        return $DB->get_fieldset_sql($sql, ['now' => time(), 'workflowid' => $workflowid]);
     }
 
     /**
@@ -96,7 +98,7 @@ class delayed_courses_manager {
     public static function set_course_delayed($courseid, $duration) {
         global $DB;
         $delayeduntil = time() + $duration;
-        $record = $DB->get_record('tool_lifecycle_delayed', array('courseid' => $courseid));
+        $record = $DB->get_record('tool_lifecycle_delayed', ['courseid' => $courseid]);
         if (!$record) {
             $record = new \stdClass();
             $record->courseid = $courseid;
@@ -118,7 +120,7 @@ class delayed_courses_manager {
      */
     public static function get_course_delayed($courseid) {
         global $DB;
-        $record = $DB->get_record('tool_lifecycle_delayed', array('courseid' => $courseid));
+        $record = $DB->get_record('tool_lifecycle_delayed', ['courseid' => $courseid]);
         if ($record) {
             return $record->delayeduntil;
         } else {
@@ -132,8 +134,19 @@ class delayed_courses_manager {
      */
     public static function get_course_delayed_wheresql() {
         $where = "{course}.id IN (SELECT courseid FROM {tool_lifecycle_delayed} WHERE delayeduntil > :now)";
-        $params = array("now" => time());
-        return array($where, $params);
+        $params = ["now" => time()];
+        return [$where, $params];
+    }
+
+    /**
+     * Get the globally delayed courses.
+     * @return array array of course ids.
+     * @throws \dml_exception
+     */
+    public static function get_globally_delayed_courses() {
+        global $DB;
+        $sql = 'SELECT courseid FROM {tool_lifecycle_delayed} WHERE delayeduntil > :now';
+        return $DB->get_fieldset_sql($sql, ['now' => time()]);
     }
 
     /**
@@ -143,6 +156,6 @@ class delayed_courses_manager {
      */
     public static function remove_delay_entry($courseid) {
         global $DB;
-        $DB->delete_records('tool_lifecycle_delayed', array('courseid' => $courseid));
+        $DB->delete_records('tool_lifecycle_delayed', ['courseid' => $courseid]);
     }
 }

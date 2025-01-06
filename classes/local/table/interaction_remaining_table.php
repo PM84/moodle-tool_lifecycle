@@ -25,6 +25,7 @@ namespace tool_lifecycle\local\table;
 
 use tool_lifecycle\local\manager\lib_manager;
 use tool_lifecycle\local\manager\workflow_manager;
+use tool_lifecycle\local\data\manual_trigger_tool;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -88,7 +89,7 @@ class interaction_remaining_table extends interaction_table {
             $where = 'c.id IN ('. $ids . ')';
         }
 
-        $this->column_nosort = array('status', 'tools');
+        $this->column_nosort = ['status', 'tools'];
         $this->sortable(true, 'lastmodified', 'DESC');
         $this->set_sql($fields, $from, $where, []);
         $this->set_count_sql("SELECT COUNT(1) FROM {course} c WHERE $where");
@@ -130,16 +131,15 @@ class interaction_remaining_table extends interaction_table {
         foreach ($this->availabletools as $tool) {
             if (has_capability($tool->capability, \context_course::instance($row->courseid), null, false)) {
                 $actions[$tool->triggerid] = new \action_menu_link_secondary(
-                    new \moodle_url($PAGE->url, array('triggerid' => $tool->triggerid,
-                        'courseid' => $row->courseid, 'sesskey' => sesskey())),
-                    new \pix_icon($tool->icon, $tool->displayname, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                    new \moodle_url($PAGE->url, ['triggerid' => $tool->triggerid,
+                        'courseid' => $row->courseid, 'sesskey' => sesskey(), ]),
+                    new \pix_icon($tool->icon, $tool->displayname, 'moodle', ['class' => 'iconsmall', 'title' => '']),
                     $tool->displayname
                 );
             }
         }
 
         $menu = new \action_menu();
-        $menu->set_alignment(\action_menu::TR, \action_menu::BR);
         $menu->set_menu_trigger(get_string('action'));
 
         foreach ($actions as $action) {

@@ -64,41 +64,27 @@ class specificdate extends base_automatic {
      */
     public function get_course_recordset_where($triggerid) {
         $settings = settings_manager::get_settings($triggerid, settings_type::TRIGGER);
-        $lastrun = getdate($settings['timelastrun']);
         $datesraw = $settings['dates'];
         $dates = $this->parse_dates($datesraw);
-
-        $triggerat = array();
-
-        foreach ($dates as $dateparts) {
-            if ($dateparts['mon'] > $lastrun['mon']) {
-                $date = new DateTime($lastrun['year'].'-'.$dateparts['mon'].'-'.$dateparts['day']);
-            } else if ($dateparts['mon'] === $lastrun['mon']) {
-                if ($dateparts['day'] > $lastrun['day']) {
-                    $date = new DateTime($lastrun['year'].'-'.$dateparts['mon'].'-'.$dateparts['day']);
-                } else {
-                    $date = new DateTime(($lastrun['year'] + 1) .'-'.$dateparts['mon'].'-'.$dateparts['day']);
-                }
-            } else {
-                $date = new DateTime(($lastrun['year'] + 1) .'-'.$dateparts['mon'].'-'.$dateparts['day']);
-            }
-
-            $triggerat [] = $date->getTimestamp();
-        }
-
-        sort($triggerat);
-
+        $lastrun = getdate($settings['timelastrun']);
         $current = time();
+        $today = getdate($current);
 
-        foreach ($triggerat as $timestamp) {
-            if ($timestamp < $current) {
-                $settings['timelastrun'] = $current;
-                $trigger = trigger_manager::get_instance($triggerid);
-                settings_manager::save_settings($triggerid, settings_type::TRIGGER, $trigger->subpluginname, $settings);
-                return array('true', array());
+        foreach ($dates as $date) {
+            // We want to trigger only if the $date is today.
+            if ($date['mon'] == $today['mon'] && $date['day'] == $today['mday']) {
+                // Now only make sure if $lastrun was today -> don't trigger.
+                if ($lastrun['yday'] == $today['yday'] && $lastrun['year'] == $today['year']) {
+                    continue;
+                } else {
+                    $settings['timelastrun'] = $current;
+                    $trigger = trigger_manager::get_instance($triggerid);
+                    settings_manager::save_settings($triggerid, settings_type::TRIGGER, $trigger->subpluginname, $settings);
+                    return ['true', []];
+                }
             }
         }
-        return array('false', array());
+        return ['false', []];
     }
 
     /**
@@ -109,16 +95,16 @@ class specificdate extends base_automatic {
      */
     private function parse_dates($datesraw) {
         $dates = preg_split('/\r\n|\r|\n/', $datesraw);
-        $result = array();
+        $result = [];
         foreach ($dates as $date) {
             $dateparts = explode('.', $date);
             if (count($dateparts) !== 2) {
                 throw new \moodle_exception("Each date has to consist of two parts devided by point. We got: " . $date);
             }
-            $result [] = array(
+            $result[] = [
                 'mon' => $dateparts[1],
-                'day' => $dateparts[0]
-            );
+                'day' => $dateparts[0],
+            ];
         }
         return $result;
     }
@@ -136,10 +122,10 @@ class specificdate extends base_automatic {
      * @return instance_setting[] containing settings keys and PARAM_TYPES
      */
     public function instance_settings() {
-        return array(
+        return [
             new instance_setting('dates', PARAM_TEXT),
             new instance_setting('timelastrun', PARAM_INT),
-        );
+        ];
     }
 
     /**
@@ -149,11 +135,11 @@ class specificdate extends base_automatic {
      * @throws \coding_exception
      */
     public function extend_add_instance_form_definition($mform) {
-        $mform->addElement('textarea', 'dates', get_string('dates', 'lifecycletrigger_specificdate'),
-            get_string('dates_desc', 'lifecycletrigger_specificdate'));
+        $mform->addElement('textarea', 'dates', get_string('dates', 'lifecycletrigger_specificdate'));
         $mform->setType('dates', PARAM_TEXT);
+        $mform->addHelpButton('dates', 'dates', 'lifecycletrigger_specificdate');
         $mform->addElement('hidden', 'timelastrun');
-        $mform->setDefault('timelastrun', time());
+        $mform->setDefault('timelastrun', 0);
         $mform->setType('timelastrun', PARAM_INT);
     }
 

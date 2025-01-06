@@ -46,7 +46,7 @@ class interaction_attention_table extends interaction_table {
      * @param int[] $courseids List of ids for courses that require attention.
      * @param object $filterdata Object of filter criteria
      */
-    public function __construct($uniqueid, $courseids, $filterdata) {
+    public function __construct($uniqueid, $courseids, $filterdata = null) {
         parent::__construct($uniqueid);
         global $PAGE, $DB;
 
@@ -68,18 +68,23 @@ class interaction_attention_table extends interaction_table {
         $params = [];
 
         if ($filterdata) {
-            if ($filterdata && $filterdata->shortname) {
+            if ($filterdata->shortname) {
                 $where[] = $DB->sql_like('c.shortname', ':shortname', false, false);
                 $params['shortname'] = '%' . $DB->sql_like_escape($filterdata->shortname) . '%';
             }
 
-            if ($filterdata && $filterdata->fullname) {
+            if ($filterdata->fullname) {
                 $where[] = $DB->sql_like('c.fullname', ':fullname', false, false);
                 $params['fullname'] = '%' . $DB->sql_like_escape($filterdata->fullname) . '%';
             }
+
+            if ($filterdata->courseid) {
+                $where[] = 'c.id = :courseid';
+                $params['courseid'] = $filterdata->courseid;
+            }
         }
 
-        $this->column_nosort = array('status', 'tools');
+        $this->column_nosort = ['status', 'tools'];
         $this->set_sql($fields, $from, join(" AND ", $where), $params);
         $this->define_baseurl($PAGE->url);
         $this->init();
@@ -150,12 +155,12 @@ class interaction_attention_table extends interaction_table {
         global $PAGE, $OUTPUT;
 
         $button = new \single_button(new \moodle_url($PAGE->url,
-            array(
+            [
                 'stepid' => $stepinstanceid,
                 'action' => $action,
                 'processid' => $processid,
-                'sesskey' => sesskey()
-            )), $alt
+                'sesskey' => sesskey(),
+            ]), $alt
         );
         return $OUTPUT->render($button);
     }

@@ -21,11 +21,8 @@
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(__DIR__ . '/../../../config.php');
 
-use tool_lifecycle\local\manager\step_manager;
-use tool_lifecycle\local\manager\interaction_manager;
-use tool_lifecycle\local\table\interaction_attention_table;
+require_once(__DIR__ . '/../../../config.php');
 
 require_login(null, false);
 
@@ -63,17 +60,17 @@ $renderer = $PAGE->get_renderer('tool_lifecycle');
 
 echo $renderer->header();
 
-$mform = new \tool_lifecycle\local\form\form_backups_filter();
+$mform = new \tool_lifecycle\local\form\form_courses_filter();
 
 // Cache handling.
 $cache = cache::make('tool_lifecycle', 'mformdata');
 if ($mform->is_cancelled()) {
-    $cache->delete('coursebackups_filter');
+    $cache->delete('viewcourses_filter');
     redirect($PAGE->url);
 } else if ($data = $mform->get_data()) {
-    $cache->set('coursebackups_filter', $data);
+    $cache->set('viewcourses_filter', $data);
 } else {
-    $data = $cache->get('coursebackups_filter');
+    $data = $cache->get('viewcourses_filter');
     if ($data) {
         $mform->set_data($data);
     }

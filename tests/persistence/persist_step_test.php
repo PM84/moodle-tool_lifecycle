@@ -22,6 +22,7 @@
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_lifecycle;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../lib.php');
@@ -38,7 +39,7 @@ use tool_lifecycle\local\manager\step_manager;
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lifecycle_persist_step_testcase extends \advanced_testcase {
+final class persist_step_test extends \advanced_testcase {
 
     /** @var workflow $workflow Instance of the workflow. */
     private $workflow;
@@ -51,7 +52,7 @@ class tool_lifecycle_persist_step_testcase extends \advanced_testcase {
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function setUp() : void {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         $this->generator = $this->getDataGenerator()->get_plugin_generator('tool_lifecycle');
 
@@ -60,8 +61,9 @@ class tool_lifecycle_persist_step_testcase extends \advanced_testcase {
 
     /**
      * Test that after an insert the id from the database is set within the step object.
+     * @covers \tool_lifecycle\local\manager\step_manager
      */
-    public function test_add_step() {
+    public function test_add_step(): void {
         $step = $this->generator->create_step(
             'instance1',
             'subpluginname',
@@ -73,8 +75,9 @@ class tool_lifecycle_persist_step_testcase extends \advanced_testcase {
 
     /**
      * Test that sortindizes are created correclty when creating multiple steps.
+     * @covers \tool_lifecycle\local\manager\step_manager
      */
-    public function test_add_multiple_steps() {
+    public function test_add_multiple_steps(): void {
         $step1 = $this->generator->create_step(
             'instance1',
             'subpluginname',
@@ -94,8 +97,9 @@ class tool_lifecycle_persist_step_testcase extends \advanced_testcase {
 
     /**
      * Test that the step can be removed correctly.
+     * @covers \tool_lifecycle\local\manager\step_manager
      */
-    public function test_remove_step() {
+    public function test_remove_step(): void {
         $step1 = $this->generator->create_step(
             'instance1',
             'subpluginname',
@@ -126,8 +130,9 @@ class tool_lifecycle_persist_step_testcase extends \advanced_testcase {
 
     /**
      * Test that sortindizes are still created correctly, when some steps were already removed.
+     * @covers \tool_lifecycle\local\manager\step_manager
      */
-    public function test_add_after_remove_step() {
+    public function test_add_after_remove_step(): void {
         $step1 = $this->generator->create_step(
             'instance1',
             'subpluginname',

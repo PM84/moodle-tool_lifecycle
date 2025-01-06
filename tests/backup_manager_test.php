@@ -22,6 +22,7 @@
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_lifecycle;
 
 use tool_lifecycle\local\manager\backup_manager;
 
@@ -33,7 +34,7 @@ use tool_lifecycle\local\manager\backup_manager;
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lifecycle_backup_manager_testcase extends \advanced_testcase {
+final class backup_manager_test extends \advanced_testcase {
 
     /** @var array $course Instance of the course under test. */
     private $course;
@@ -41,15 +42,16 @@ class tool_lifecycle_backup_manager_testcase extends \advanced_testcase {
     /**
      * Setup the testcase.
      */
-    public function setUp() : void {
+    public function setUp(): void {
         $this->resetAfterTest(false);
         $this->course = $this->getDataGenerator()->create_course();
     }
 
     /**
      * Test creating a backup for a course.
+     * @covers \tool_lifecycle\local\manager\backup_manager create backup
      */
-    public function test_backup_create() {
+    public function test_backup_create(): void {
         global $DB;
         $result = backup_manager::create_course_backup($this->course->id);
         $this->assertTrue($result);
@@ -59,15 +61,16 @@ class tool_lifecycle_backup_manager_testcase extends \advanced_testcase {
 
     /**
      * Test redirect without errors when starting to restore a backup.
+     * @covers \tool_lifecycle\local\manager\backup_manager restore backup
      */
-    public function test_backup_restore() {
+    public function test_backup_restore(): void {
         global $DB;
         $backups = $DB->get_records('tool_lifecycle_backups');
         $this->assertEquals(1, count($backups));
         $backupid = array_pop($backups)->id;
         try {
             backup_manager::restore_course_backup($backupid);
-        } catch (moodle_exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertEquals('redirecterrordetected', $e->errorcode);
         }
     }

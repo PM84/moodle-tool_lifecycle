@@ -22,7 +22,7 @@
  * @copyright  2018 Tamara Gunkel, Jan Dageforde WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace tool_lifecycle;
 use tool_lifecycle\action;
 use tool_lifecycle\local\entity\workflow;
 use tool_lifecycle\local\manager\workflow_manager;
@@ -35,7 +35,7 @@ use tool_lifecycle\local\manager\workflow_manager;
  * @copyright  2018 Tamara Gunkel, Jan Dageforde WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lifecycle_process_status_message_testcase extends \advanced_testcase {
+final class process_status_message_test extends \advanced_testcase {
     /** Icon of the manual trigger. */
     const MANUAL_TRIGGER1_ICON = 't/up';
     /** Display name of the manual trigger. */
@@ -46,14 +46,14 @@ class tool_lifecycle_process_status_message_testcase extends \advanced_testcase 
     /** @var workflow $workflow Workflow of this test. */
     private $workflow;
 
-    /** @var tool_lifecycle_generator $generator Instance of the test generator. */
+    /** @var \tool_lifecycle_generator $generator Instance of the test generator. */
     private $generator;
 
     /**
      * Setup the testcase.
-     * @throws coding_exception
+     * @throws \coding_exception
      */
-    public function setUp() : void {
+    public function setUp(): void {
         global $USER;
 
         // We do not need a sesskey check in theses tests.
@@ -61,7 +61,7 @@ class tool_lifecycle_process_status_message_testcase extends \advanced_testcase 
 
         $this->resetAfterTest(false);
         $this->generator = $this->getDataGenerator()->get_plugin_generator('tool_lifecycle');
-        $settings = new stdClass();
+        $settings = new \stdClass();
         $settings->icon = self::MANUAL_TRIGGER1_ICON;
         $settings->displayname = self::MANUAL_TRIGGER1_DISPLAYNAME;
         $settings->capability = self::MANUAL_TRIGGER1_CAPABILITY;
@@ -74,8 +74,9 @@ class tool_lifecycle_process_status_message_testcase extends \advanced_testcase 
 
     /**
      * Test getting status message for a process.
+     * @covers \tool_lifecycle\local\manager\interaction_manager
      */
-    public function test_get_status_message() {
+    public function test_get_status_message(): void {
         $process = $this->generator->create_process(2, $this->workflow->id);
         $message = \tool_lifecycle\local\manager\interaction_manager::get_process_status_message($process->id);
         $this->assertEquals(get_string("workflow_started", "tool_lifecycle"), $message);

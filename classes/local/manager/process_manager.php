@@ -88,9 +88,9 @@ class process_manager {
     public static function get_processes() {
         global $DB;
         $records = $DB->get_records('tool_lifecycle_process');
-        $processes = array();
+        $processes = [];
         foreach ($records as $record) {
-            $processes [] = process::from_record($record);
+            $processes[] = process::from_record($record);
         }
         return $processes;
     }
@@ -103,7 +103,7 @@ class process_manager {
      */
     public static function get_process_by_id($processid) {
         global $DB;
-        $record = $DB->get_record('tool_lifecycle_process', array('id' => $processid));
+        $record = $DB->get_record('tool_lifecycle_process', ['id' => $processid]);
         if ($record) {
             return process::from_record($record);
         } else {
@@ -119,7 +119,7 @@ class process_manager {
      */
     public static function count_processes_by_workflow($workflowid) {
         global $DB;
-        return $DB->count_records('tool_lifecycle_process', array('workflowid' => $workflowid));
+        return $DB->count_records('tool_lifecycle_process', ['workflowid' => $workflowid]);
     }
 
     /**
@@ -130,10 +130,10 @@ class process_manager {
      */
     public static function get_processes_by_workflow($workflowid) {
         global $DB;
-        $records = $DB->get_records('tool_lifecycle_process', array('workflowid' => $workflowid));
-        $processes = array();
+        $records = $DB->get_records('tool_lifecycle_process', ['workflowid' => $workflowid]);
+        $processes = [];
         foreach ($records as $record) {
-            $processes [] = process::from_record($record);
+            $processes[] = process::from_record($record);
         }
         return $processes;
     }
@@ -201,7 +201,7 @@ class process_manager {
      */
     private static function remove_process($process) {
         global $DB;
-        $DB->delete_records('tool_lifecycle_procdata', array('processid' => $process->id));
+        $DB->delete_records('tool_lifecycle_procdata', ['processid' => $process->id]);
         $DB->delete_records('tool_lifecycle_process', (array) $process);
     }
 
@@ -213,7 +213,7 @@ class process_manager {
      */
     public static function get_process_by_course_id($courseid) {
         global $DB;
-        $record = $DB->get_record('tool_lifecycle_process', array('courseid' => $courseid));
+        $record = $DB->get_record('tool_lifecycle_process', ['courseid' => $courseid]);
         if ($record) {
             return process::from_record($record);
         } else {

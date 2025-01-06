@@ -22,6 +22,7 @@
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_lifecycle;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../lib.php');
@@ -39,7 +40,7 @@ use tool_lifecycle\local\manager\step_manager;
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lifecycle_persist_process_data_testcase extends \advanced_testcase {
+final class persist_process_data_test extends \advanced_testcase {
 
     /** @var process $process Instance of the process. */
     private $process;
@@ -54,7 +55,7 @@ class tool_lifecycle_persist_process_data_testcase extends \advanced_testcase {
      * @throws coding_exception
      * @throws dml_exception
      */
-    public function setUp() : void {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator()->get_plugin_generator('tool_lifecycle');
 
@@ -67,8 +68,9 @@ class tool_lifecycle_persist_process_data_testcase extends \advanced_testcase {
 
     /**
      * Test the getting and setting of process data.
+     * @covers \tool_lifecycle\local\manager\process_data_manager
      */
-    public function test_get_set_process_data() {
+    public function test_get_set_process_data(): void {
         $step = step_manager::get_step_instance_by_workflow_index($this->process->workflowid, $this->process->stepindex);
         process_data_manager::set_process_data(
             $this->process->id,

@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Exclude delayed courses trigger';
-
 $string['delay'] = 'This module will exclude all courses, which were delayed by user interaction';
+$string['pluginname'] = 'Exclude delayed courses trigger';
+$string['privacy:metadata'] = 'This subplugin does not store any personal data.';
+

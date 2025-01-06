@@ -28,6 +28,7 @@ use tool_lifecycle\local\manager\lib_manager;
 use tool_lifecycle\local\manager\step_manager;
 use tool_lifecycle\local\manager\trigger_manager;
 use tool_lifecycle\local\manager\workflow_manager;
+use tool_lifecycle\urls;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -85,10 +86,10 @@ class workflow_definition_table extends workflow_table {
             return userdate($row->timeactive, get_string('strftimedatetime'), 0);
         }
         if (workflow_manager::is_valid($row->id)) {
-            return $OUTPUT->single_button(new \moodle_url($PAGE->url,
-                array('action' => action::WORKFLOW_ACTIVATE,
+            return $OUTPUT->single_button(new \moodle_url(urls::ACTIVE_WORKFLOWS,
+                ['action' => action::WORKFLOW_ACTIVATE,
                     'sesskey' => sesskey(),
-                    'workflowid' => $row->id)),
+                    'workflowid' => $row->id, ]),
                 get_string('activateworkflow', 'tool_lifecycle'));
         } else {
             return $OUTPUT->pix_icon('i/warning', get_string('invalid_workflow_details', 'tool_lifecycle')) .
@@ -109,10 +110,10 @@ class workflow_definition_table extends workflow_table {
 
         $alt = get_string('viewsteps', 'tool_lifecycle');
         $icon = 't/viewdetails';
-        $url = new \moodle_url('/admin/tool/lifecycle/workflowsettings.php',
-            array('workflowid' => $row->id, 'sesskey' => sesskey()));
-        $output .= $OUTPUT->action_icon($url, new \pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
-            null, array('title' => $alt));
+        $url = new \moodle_url(urls::WORKFLOW_DETAILS,
+            ['wf' => $row->id]);
+        $output .= $OUTPUT->action_icon($url, new \pix_icon($icon, $alt, 'moodle', ['title' => $alt]),
+            null, ['title' => $alt]);
 
         $trigger = trigger_manager::get_triggers_for_workflow($row->id);
         if (!empty($trigger)) {
@@ -120,17 +121,6 @@ class workflow_definition_table extends workflow_table {
         }
 
         if (!isset($lib) || $lib->has_multiple_instances()) {
-
-            $action = action::WORKFLOW_INSTANCE_FROM;
-            $alt = get_string('editworkflow', 'tool_lifecycle');
-            $icon = 't/edit';
-            $output .= $this->format_icon_link($action, $row->id, $icon, $alt);
-
-            $action = action::WORKFLOW_DUPLICATE;
-            $alt = get_string('duplicateworkflow', 'tool_lifecycle');
-            $icon = 't/copy';
-            $output .= $this->format_icon_link($action, $row->id, $icon, $alt);
-
             $action = action::WORKFLOW_BACKUP;
             $alt = get_string('backupworkflow', 'tool_lifecycle');
             $icon = 't/backup';

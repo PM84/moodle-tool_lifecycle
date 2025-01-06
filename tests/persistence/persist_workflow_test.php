@@ -22,6 +22,7 @@
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_lifecycle;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../lib.php');
@@ -37,7 +38,7 @@ use tool_lifecycle\local\manager\workflow_manager;
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lifecycle_persist_workflow_testcase extends \advanced_testcase {
+final class persist_workflow_test extends \advanced_testcase {
 
     /** @var workflow $workflow Instance of the workflow. */
     private $workflow;
@@ -45,9 +46,9 @@ class tool_lifecycle_persist_workflow_testcase extends \advanced_testcase {
     /**
      * Setup the testcase.
      */
-    public function setUp() : void {
+    public function setUp(): void {
         $this->resetAfterTest(true);
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id = null;
         $record->title = 'Title';
         $this->workflow = workflow::from_record($record);
@@ -55,8 +56,9 @@ class tool_lifecycle_persist_workflow_testcase extends \advanced_testcase {
 
     /**
      * Test the creation of a process.
+     * @covers \tool_lifecycle\local\manager\workflow_manager create a wf.
      */
-    public function test_create() {
+    public function test_create(): void {
         $this->assertNull($this->workflow->id);
         workflow_manager::insert_or_update($this->workflow);
         $this->assertNotNull($this->workflow->id);

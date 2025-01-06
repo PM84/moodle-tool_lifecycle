@@ -21,6 +21,7 @@
  * @copyright  2017 Tobias Reischmann WWU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
@@ -32,7 +33,7 @@ admin_externalpage_setup('tool_lifecycle_coursebackups');
 
 $PAGE->set_url(new \moodle_url('/admin/tool/lifecycle/coursebackups.php'));
 
-$mform = new \tool_lifecycle\local\form\form_backups_filter();
+$mform = new \tool_lifecycle\local\form\form_courses_filter();
 
 // Cache handling.
 $cache = cache::make('tool_lifecycle', 'mformdata');

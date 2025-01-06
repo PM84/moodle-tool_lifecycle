@@ -22,13 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Duplicate step';
-
-$string['duplicate_form'] = 'Enter data';
-
+$string['action_new_course_data'] = '{$a} supplied new course name';
+$string['duplicate:enterdata'] = 'Enter data for course duplication';
 $string['duplicate_course_header'] = 'Duplicate course';
+$string['duplicate_form'] = 'Enter data';
+$string['pluginname'] = 'Duplicate step';
+$string['privacy:metadata'] = 'This subplugin does not store any personal data.';
+
+
 $string['status_message_duplication'] = 'Duplicated course will be available shortly.';
 $string['status_message_form'] = 'Additional information required';
-$string['action_new_course_data'] = '{$a} supplied new course name';
 
-$string['duplicate:enterdata'] = 'Enter data for course duplication';
